@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Entrenador de Carta de Pizzas</title>
+  <style>
+    :root{
+      --bg: #0e1116;
+      --panel:#151a22;
+      --muted:#99a3b3;
+      --text:#eaf1ff;
+      --accent:#4f9cff;
+      --accent-2:#9cffd0;
+      --ok:#46d38a;
+      --bad:#ff6b6b;
+      --chip:#1f2733;
+      --chip-hover:#273142;
+      --shadow:0 12px 28px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.25);
+      --radius:18px;
+    }
+    html,body{height:100%}
+    body{margin:0;background:linear-gradient(180deg,#0c1016,#0a0d12);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial}
+    .container{max-width:1100px;margin:28px auto;padding:0 20px}
+    header{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:40px;height:40px;border-radius:12px;background:radial-gradient(circle at 30% 30%, #6de2ff, #4f9cff 50%, #1c5fff);box-shadow:var(--shadow)}
+    h1{font-size: clamp(18px, 2.5vw, 24px);margin:0;font-weight:700}
+    .panel{background:var(--panel);border:1px solid #202735;border-radius:var(--radius);box-shadow:var(--shadow)}
+    .controls{margin-top:18px;padding:14px 16px;display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+    .control{display:flex;flex-direction:column;gap:6px}
+    label{font-size:13px;color:var(--muted)}
+    select,input[type="number"],input[type="range"],button,.chip{border-radius:12px;border:1px solid #2a3342;background:#121722;color:var(--text);padding:10px 12px}
+    select,input[type="number"],input[type="range"){box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .kpi{display:flex;gap:12px;align-items:center}
+    .kpi > div{background:#0e1420;border:1px solid #283247;padding:8px 12px;border-radius:10px;color:#cfe0ff}
+    #app{margin-top:18px;display:grid;gap:16px}
+
+    .card{padding:18px}
+    .title{font-size: clamp(18px, 3vw, 28px);font-weight:800;margin:0 0 6px}
+    .subtitle{color:var(--muted);font-size:14px;margin-bottom:12px}
+
+    .drop-area{min-height:76px;border:2px dashed #2b3750;border-radius:14px;padding:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start}
+    .drop-area.hint{border-style:solid;border-color:#3656ff}
+    .drop-area.correct{border-color:var(--ok)}
+    .drop-area.wrong{border-color:var(--bad)}
+
+    .bank{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{background:var(--chip);cursor:grab;user-select:none;transition:transform .08s ease, background .15s ease}
+    .chip[draggable="true"]:active{transform:scale(.96);cursor:grabbing}
+    .chip:hover{background:var(--chip-hover)}
+    .chip.bad{background:#3a1d22;border-color:#5a2a30}
+    .chip.ok{background:#1d3027;border-color:#2b4c3b}
+    .chip.locked{opacity:.9;cursor:default}
+
+    .actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:8px}
+    .left,.right{display:flex;gap:10px;flex-wrap:wrap}
+    button{background:linear-gradient(180deg,#2a66ff,#1b50d1);border-color:#274bb0;box-shadow:0 8px 18px rgba(31,78,255,.25);font-weight:700}
+    button.secondary{background:#172034;border-color:#27324a;box-shadow:none}
+    button.ghost{background:transparent;border-color:#2a3342}
+    button.ok{background:linear-gradient(180deg,#3cd38c,#2ab878);border-color:#289a65}
+    .small{font-size:12px;color:#a8b7d1}
+
+    .flex{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .list{padding:14px}
+    details{background:#0f1520;border:1px solid #283247;border-radius:12px;padding:12px}
+    summary{cursor:pointer;font-weight:700}
+    .grid{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+
+    .pill{display:inline-flex;gap:8px;padding:6px 10px;border-radius:999px;background:#0f1520;border:1px solid #283247;color:#cfe0ff}
+    .hint{color:#c6d7ff}
+    .foot{opacity:.7; font-size:12px; text-align:center; margin:10px 0}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <h1>Entrenador de Carta de Pizzas</h1>
+      </div>
+      <div class="kpi" id="kpis">
+        <div>✔️ Aciertos: <b id="hits">0</b></div>
+        <div>❌ Fallos: <b id="misses">0</b></div>
+        <div>🔥 Racha: <b id="streak">0</b></div>
+      </div>
+    </header>
+
+    <section class="panel controls">
+      <div class="control">
+        <label for="mode">Modo de práctica</label>
+        <select id="mode">
+          <option value="drag">Arrastra ingredientes → según la pizza</option>
+          <option value="mc-name">Elige el nombre → dado un listado de ingredientes</option>
+          <option value="flash">Flashcards (revelar ingredientes)</option>
+        </select>
+      </div>
+      <div class="control" id="distractorWrap">
+        <label for="distractors">Dificultad (distractores en el banco): <span id="distractorsLabel">6</span></label>
+        <input id="distractors" type="range" min="0" max="29" value="6" />
+      </div>
+      <div class="control">
+        <label>Opciones</label>
+        <div class="row">
+          <label class="pill"><input type="checkbox" id="includeAmbiguous" checked style="accent-color:#4f9cff"> Incluir “Cuatro quesos” y “Al gusto”</label>
+          <label class="pill"><input type="checkbox" id="showBase" checked style="accent-color:#4f9cff"> Mostrar base tal cual carta</label>
+        </div>
+      </div>
+      <div class="control">
+        <label>Atajos</label>
+        <div class="row small">
+          <span class="pill">N → Siguiente</span>
+          <span class="pill">R → Revelar</span>
+          <span class="pill">Borrar selección: doble clic en chip</span>
+        </div>
+      </div>
+    </section>
+
+    <main id="app"></main>
+
+    <section class="panel list">
+      <details>
+        <summary>Ver carta completa (para repasar)</summary>
+        <div class="grid" id="fullMenu"></div>
+      </details>
+      <p class="foot">Consejo: alterna entre “Arrastrar ingredientes” y “Elige el nombre” para reforzar el recuerdo en ambos sentidos. Mantén sesiones cortas y frecuentes.</p>
+    </section>
+  </div>
+
+  <script>
+  // ======= Datos (transcritos de la carta) =======
+  // Ingredientes se guardan tal cual aparecen entre paréntesis en la carta.
+  const MENU = [
+    {id:1,  name:"Francesca", price:13.50, ingredients:["alcachofas","aceitunas negras","cebolla","parmesano","tomate seco","albahaca","ajo"]},
+    {id:2,  name:"Napoli", price:11.50, ingredients:["anchoas","alcaparras","aceitunas negras","orégano","ajo"]},
+    {id:3,  name:"Quattro stagioni", price:12.50, ingredients:["jamón","champiñones","brotes de ajo","alcachofas","orégano","ajo"]},
+    {id:4,  name:"Capricciosa", price:11.50, ingredients:["jamón","champiñones","alcachofas","orégano","ajo"]},
+    {id:5,  name:"Tartaglia", price:9.50,  ingredients:["jamón","orégano"]},
+    {id:6,  name:"Pulcinella", price:10.50, ingredients:["jamón","champiñones","orégano","ajo"]},
+    {id:7,  name:"Zan Tropical", price:10.50, ingredients:["jamón","piña","orégano"]},
+    {id:8,  name:"Pierrot", price:10.50, ingredients:["jamón","cebolla","orégano","ajo"]},
+    {id:9,  name:"Scaramuccia", price:11.50, ingredients:["jamón","salami","atún","orégano","ajo"]},
+    {id:10, name:"Meneghino", price:11.50, ingredients:["jamón","champiñones","atún","orégano","ajo"]},
+    {id:11, name:"Portoghese", price:12.50, ingredients:["tomate fresco","jamón serrano","albahaca"]},
+    {id:12, name:"Vegetal", price:11.50, ingredients:["berenjenas","champiñones","brotes de ajo","orégano","ajo"]},
+    {id:13, name:"Corallina", price:10.50, ingredients:["jamón","atún","orégano","ajo"]},
+    {id:14, name:"Pantalone", price:11.50, ingredients:["berenjenas","jamón","champiñones","orégano","ajo"]},
+    {id:15, name:"Brighella", price:12.50, ingredients:["berenjenas","champiñones","brotes de ajo","pimiento","orégano","ajo"]},
+    {id:16, name:"Spezzacapo", price:13.50, ingredients:["berenjenas","cebolla","champiñones","brotes de ajo","pimiento","orégano","ajo"]},
+    {id:17, name:"Arlecchino", price:11.50, ingredients:["berenjenas","tomate fresco","albahaca","ajo"]},
+    {id:18, name:"Bacco", price:12.50, ingredients:["anchoas","alcaparras","tomate fresco","rúcula","ajo"]},
+    {id:19, name:"Rugantino", price:12.50, ingredients:["tomate fresco","rúcula","parmesano"]},
+    {id:20, name:"Balanzone", price:10.50, ingredients:["atún","cebolla","orégano","ajo"]},
+    {id:21, name:"Colombina", price:11.50, ingredients:["atún","cebolla","alcaparras","orégano","ajo"]},
+    {id:22, name:"Capitán Spaventa", price:11.50, ingredients:["atún","cebolla","champiñones","orégano","ajo"]},
+    {id:23, name:"Peppe Nappa", price:12.50, ingredients:["atún","cebolla","anchoas","alcaparras","orégano","ajo"]},
+    {id:24, name:"Scapino", price:9.50,  ingredients:["salami","orégano","ajo"]},
+    {id:25, name:"Crispino", price:10.50, ingredients:["salami","alcaparras","orégano","ajo"]},
+    {id:26, name:"Gianduia", price:11.50, ingredients:["salami","cebolla","alcaparras","orégano","ajo"]},
+    {id:27, name:"Al cuatro quesos", price:12.00, ingredients:["salsa de tomate","cuatro quesos", "orégano"]},
+    {id:28, name:"Al gusto", price:13.50, ingredients:["albahaca","pimiento", "tomate seco", "berenjenas", "parmesano", "ajo", "almendra"]},
+    {id:29, name:"Calabrese", price:13.50, ingredients:["sobrasada de Calabria","cebolla","parmesano","albahaca","ajo"]},
+  ];
+
+  // ======= Utilidades =======
+  const ALL_ING = [...new Set(MENU.flatMap(p => p.ingredients))];
+  // Clasificación para ordenar el banco en modo "arrastrar":
+  const HERBS = new Set(["albahaca","rúcula","orégano","ajo"]);
+  const PROTEINS = new Set([
+    "jamón","jamón serrano","atún","salami","sobrasada de Calabria","anchoas",
+    "parmesano","cuatro quesos"
+  ]);
+  function sortIngredients(list){
+    const weight = (name)=> PROTEINS.has(name) ? 0 : (HERBS.has(name) ? 2 : 1); // 0=prote, 1=verduras/otros, 2=hierbas
+    return list.slice().sort((a,b)=>{
+      const wa = weight(a), wb = weight(b);
+      if(wa!==wb) return wa-wb;
+      return a.localeCompare(b,'es',{sensitivity:'base'});
+    });
+  }
+  const fmt = n => n.toLocaleString('es-ES', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const pick = (arr) => arr[Math.floor(Math.random()*arr.length)];
+  const shuffle = (arr) => arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(v=>v[1]);
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+  let hits=0, misses=0, streak=0;
+  function kpi(){
+    $('#hits').textContent=hits; $('#misses').textContent=misses; $('#streak').textContent=streak;
+  }
+
+  // ======= Render carta completa =======
+  function renderFullMenu(){
+    const wrap = $('#fullMenu');
+    wrap.innerHTML = '';
+    MENU.forEach(p=>{
+      const card = document.createElement('div');
+      card.className = 'panel';
+      card.innerHTML = `<div class="list">
+        <div class="title" style="font-size:18px">${p.id}. ${p.name}</div>
+        <div class="subtitle">(${p.ingredients.join(', ')}) — <b>${fmt(p.price)} €</b></div>
+      </div>`;
+      wrap.appendChild(card);
+    });
+  }
+
+  // ======= Núcleo de práctica =======
+  let current=null; // pizza actual
+  let placed = new Set();
+
+  const modeSel = $('#mode');
+  const includeAmbiguous = $('#includeAmbiguous');
+  const showBase = $('#showBase');
+  const distractorSlider = $('#distractors');
+  const distractorLabel = $('#distractorsLabel');
+  distractorSlider.addEventListener('input',()=>distractorLabel.textContent=distractorSlider.value);
+  // Ajuste dinámico: el máximo de distractores se adapta al nº total de ingredientes únicos
+  distractorSlider.max = Math.max(0, ALL_ING.length - 1);
+  if(parseInt(distractorSlider.value,10) > parseInt(distractorSlider.max,10)){
+    distractorSlider.value = distractorSlider.max;
+  }
+  distractorLabel.textContent = distractorSlider.value;
+
+  function filteredDeck(){
+    return MENU.filter(p=> includeAmbiguous.checked || (p.id!==27 && p.id!==28));
+  }
+
+  function next(){
+    const deck = filteredDeck();
+    current = pick(deck);
+    placed = new Set();
+    const mode = modeSel.value;
+    if(mode==='drag') renderDrag();
+    else if(mode==='mc-name') renderMCName();
+    else renderFlash();
+  }
+
+  function setupCommonCard(title, subtitle){
+    const app = $('#app');
+    app.innerHTML = '';
+    const card = document.createElement('section');
+    card.className = 'panel card';
+    card.innerHTML = `<div class="title">${title}</div><div class="subtitle">${subtitle || ''}</div>`;
+    app.appendChild(card);
+    return card;
+  }
+
+  // ---- Modo 1: Arrastrar ingredientes ----
+  function renderDrag(){
+    const card = setupCommonCard(`${current.id}. ${current.name}`, 'Arrastra los ingredientes correctos a la zona. También puedes hacer clic para moverlos.');
+
+    const drop = document.createElement('div');
+    drop.className = 'drop-area hint';
+    drop.id = 'drop';
+    drop.innerHTML = '<span class="small hint">Suelta aquí los ingredientes</span>';
+
+    // banco con distractores
+    const need = current.ingredients.slice();
+    const bankCount = parseInt(distractorSlider.value,10) + need.length;
+    const others = shuffle(ALL_ING.filter(i=>!need.includes(i))).slice(0, Math.max(0, bankCount-need.length));
+    const bankPool = sortIngredients([...new Set([...need, ...others])]);
+
+    const bank = document.createElement('div');
+    bank.className = 'bank';
+
+    function makeChip(name){
+      const c = document.createElement('button');
+      c.type='button';
+      c.className='chip';
+      c.textContent = name;
+      c.setAttribute('draggable','true');
+      c.dataset.name = name;
+      c.addEventListener('dblclick',()=>{ // quitar si estaba colocada
+        if(placed.has(name)){
+          placed.delete(name); refreshDrop();
+        }
+      });
+      c.addEventListener('click',()=>attemptPlace(name,c));
+      c.addEventListener('dragstart',ev=>{
+        ev.dataTransfer.setData('text/plain', name);
+      });
+      return c;
+    }
+
+    bankPool.forEach(n=> bank.appendChild(makeChip(n)));
+
+    drop.addEventListener('dragover',ev=>ev.preventDefault());
+    drop.addEventListener('drop',ev=>{
+      ev.preventDefault();
+      const name = ev.dataTransfer.getData('text/plain');
+      const chip = [...bank.children].find(el=>el.dataset.name===name);
+      attemptPlace(name, chip);
+    });
+
+    // intentamos colocar
+    function attemptPlace(name, chip){
+      if(!chip) return;
+      if(placed.has(name)) return; // ya puesta
+      if(current.ingredients.includes(name)){
+        placed.add(name);
+        chip.classList.add('ok','locked');
+        refreshDrop();
+        if(placed.size === current.ingredients.length){
+          drop.classList.add('correct');
+          hits++; streak++; kpi();
+          setTimeout(()=>next(), 650);
+        }
+      }else{
+        chip.classList.add('bad');
+        drop.classList.add('wrong');
+        misses++; streak=0; kpi();
+        setTimeout(()=>{chip.classList.remove('bad'); drop.classList.remove('wrong');}, 420);
+      }
+    }
+
+    function refreshDrop(){
+      drop.innerHTML='';
+      placed.forEach(n=>{
+        const c = document.createElement('div');
+        c.className='chip locked';
+        c.textContent=n;
+        drop.appendChild(c);
+      });
+      if(placed.size===0){
+        drop.innerHTML='<span class="small hint">Suelta aquí los ingredientes</span>';
+      }
+    }
+
+    const actions = document.createElement('div');
+    actions.className='actions';
+    actions.innerHTML = `
+      <div class="left">
+        <button class="ghost" id="reveal">Revelar</button>
+        <button class="secondary" id="resetSel">Reset</button>
+      </div>
+      <div class="right">
+        <button id="nextBtn">Siguiente (N)</button>
+      </div>`;
+
+    actions.querySelector('#reveal').onclick = ()=>{
+      placed = new Set(current.ingredients);
+      refreshDrop();
+      drop.classList.add('correct');
+    };
+    actions.querySelector('#resetSel').onclick = ()=>{placed.clear(); refreshDrop(); drop.classList.remove('correct');};
+    actions.querySelector('#nextBtn').onclick = next;
+
+    card.appendChild(drop);
+    card.insertAdjacentHTML('beforeend','<div class="subtitle" style="margin-top:8px">Banco de ingredientes</div>');
+    card.appendChild(bank);
+    card.appendChild(actions);
+  }
+
+  // ---- Modo 2: Múltiple elección del nombre a partir de ingredientes ----
+  function renderMCName(){
+    const card = setupCommonCard('¿Qué pizza es?', 'Elige el nombre correcto en base a los ingredientes.');
+    const list = document.createElement('div');
+    list.className='bank';
+
+    const opts = shuffle([current, ...shuffle(filteredDeck().filter(p=>p!==current)).slice(0,8)]);
+
+    const ing = document.createElement('div');
+    ing.className='drop-area';
+    ing.innerHTML = `<span class="small">Ingredientes: </span>` + current.ingredients.map(i=>`<span class='chip locked'>${i}</span>`).join(' ');
+
+    const answers = document.createElement('div');
+    answers.className='bank';
+
+    opts.forEach(p=>{
+      const b = document.createElement('button');
+      b.className='chip';
+      b.textContent=p.name;
+      b.onclick=()=>{
+        if(p===current){
+          b.classList.add('ok'); hits++; streak++; kpi(); setTimeout(()=>next(),500);
+        }else{ b.classList.add('bad'); misses++; streak=0; kpi(); }
+      };
+      answers.appendChild(b);
+    });
+
+    const actions = document.createElement('div');
+    actions.className='actions';
+    actions.innerHTML=`<div></div><div class='right'><button id='reveal'>Revelar (R)</button><button id='nextBtn'>Siguiente (N)</button></div>`;
+    actions.querySelector('#reveal').onclick=()=>{
+      $$('#app .chip').forEach(c=>{ if(c.textContent===current.name) c.classList.add('ok'); });
+    };
+    actions.querySelector('#nextBtn').onclick=next;
+
+    card.appendChild(ing);
+    card.insertAdjacentHTML('beforeend','<div class="subtitle" style="margin-top:8px">Opciones</div>');
+    card.appendChild(answers);
+    card.appendChild(actions);
+  }
+
+  // ---- Modo 3: Flashcards ----
+  function renderFlash(){
+    const card = setupCommonCard(`${current.id}. ${current.name}`, 'Pulsa “Revelar” para mostrar los ingredientes.');
+    const box = document.createElement('div');
+    box.className='drop-area';
+    box.style.minHeight='54px';
+    box.id='flashBox';
+    box.innerHTML = '<span class="small hint">Ingredientes ocultos…</span>';
+
+    const actions = document.createElement('div');
+    actions.className='actions';
+    actions.innerHTML = `
+      <div class="left">
+        <button class="secondary" id="wrong">No lo sabía</button>
+        <button class="ok" id="right">Lo sabía</button>
+      </div>
+      <div class="right">
+        <button id="reveal">Revelar (R)</button>
+        <button id="nextBtn">Siguiente (N)</button>
+      </div>`;
+
+    actions.querySelector('#reveal').onclick = ()=>{
+      box.innerHTML = current.ingredients.map(i=>`<span class='chip locked'>${i}</span>`).join(' ');
+      box.classList.add('correct');
+    };
+    actions.querySelector('#nextBtn').onclick = next;
+    actions.querySelector('#right').onclick = ()=>{hits++; streak++; kpi(); next();};
+    actions.querySelector('#wrong').onclick = ()=>{misses++; streak=0; kpi(); next();};
+
+    card.appendChild(box);
+    card.appendChild(actions);
+  }
+
+  // ======= Eventos globales =======
+  modeSel.addEventListener('change', next);
+  includeAmbiguous.addEventListener('change', next);
+  showBase.addEventListener('change', next);
+  document.addEventListener('keydown', (e)=>{
+    if(e.key.toLowerCase()==='n') next();
+    if(e.key.toLowerCase()==='r'){
+      const btn = document.querySelector('#app #reveal');
+      if(btn) btn.click();
+    }
+  });
+
+  // Init
+  renderFullMenu();
+  kpi();
+  next();
+  </script>
+</body>
+</html>
