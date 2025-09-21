@@ -103,7 +103,6 @@
       <div class="control">
         <label>Opciones</label>
         <div class="row">
-          <label class="pill"><input type="checkbox" id="includeAmbiguous" checked style="accent-color:#4f9cff"> Incluir “Cuatro quesos” y “Al gusto”</label>
           <label class="pill"><input type="checkbox" id="showBase" checked style="accent-color:#4f9cff"> Mostrar base tal cual carta</label>
         </div>
       </div>
@@ -158,8 +157,8 @@
     {id:24, name:"Scapino", price:9.50,  ingredients:["salami","orégano","ajo"]},
     {id:25, name:"Crispino", price:10.50, ingredients:["salami","alcaparras","orégano","ajo"]},
     {id:26, name:"Gianduia", price:11.50, ingredients:["salami","cebolla","alcaparras","orégano","ajo"]},
-    {id:27, name:"Al cuatro quesos", price:12.00, ingredients:["salsa de tomate","cuatro quesos", "orégano"]},
-    {id:28, name:"Al gusto", price:13.50, ingredients:["albahaca","pimiento", "tomate seco", "berenjenas", "parmesano", "ajo", "almendra"]},
+    {id:27, name:"Al cuatro quesos", price:12.00, ingredients:["salsa de tomate","gouda", "manchego","mozzarella", "gorgonzola", "orégano"]},
+    {id:28, name:"Al gusto", price:13.50, ingredients:["albahaca","cebolla", "pimiento", "berenjenas", "parmesano", "ajo", "almendra"]},
     {id:29, name:"Calabrese", price:13.50, ingredients:["sobrasada de Calabria","cebolla","parmesano","albahaca","ajo"]},
   ];
 
@@ -210,8 +209,7 @@
   let placed = new Set();
 
   const modeSel = $('#mode');
-  const includeAmbiguous = $('#includeAmbiguous');
-  const showBase = $('#showBase');
+    const showBase = $('#showBase');
   const distractorSlider = $('#distractors');
   const distractorLabel = $('#distractorsLabel');
   distractorSlider.addEventListener('input',()=>distractorLabel.textContent=distractorSlider.value);
@@ -223,7 +221,7 @@
   distractorLabel.textContent = distractorSlider.value;
 
   function filteredDeck(){
-    return MENU.filter(p=> includeAmbiguous.checked || (p.id!==27 && p.id!==28));
+    return MENU;
   }
 
   function next(){
@@ -428,8 +426,7 @@
 
   // ======= Eventos globales =======
   modeSel.addEventListener('change', next);
-  includeAmbiguous.addEventListener('change', next);
-  showBase.addEventListener('change', next);
+    showBase.addEventListener('change', next);
   document.addEventListener('keydown', (e)=>{
     if(e.key.toLowerCase()==='n') next();
     if(e.key.toLowerCase()==='r'){
