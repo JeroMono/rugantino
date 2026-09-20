@@ -144,35 +144,30 @@ body.hide-oven .chip::before,.chip.noOven::before{display:none}
 .opt.bad{border-color:rgba(255,107,107,.5);background:rgba(255,107,107,.1);color:#ffcdcd;opacity:.85}
 .opt:disabled{cursor:default}
 
-/* ---------- Horno / abreviaturas ---------- */
-.progdots{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
-.pdot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.14)}
-.pdot.ok{background:var(--ok)}
-.pdot.ko{background:var(--bad)}
-.pdot.now{background:var(--accent);box-shadow:0 0 0 3px rgba(79,156,255,.2)}
+/* ---------- Bloques de montaje (zona + su banco) ---------- */
+.block{border:1px solid var(--line);border-radius:14px;padding:11px;margin-top:12px;background:rgba(255,255,255,.016)}
+.block.fire{border-color:rgba(255,138,61,.3)}
+.block.fresh{border-color:rgba(87,224,168,.26)}
+.block .zonehead{margin:0 0 7px}
+.block .bank{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(255,255,255,.07)}
+.block .bank .hintline{font-size:11px;color:var(--muted);margin-bottom:7px;letter-spacing:.3px}
+.block.done .bank{opacity:.5}
+
+/* ---------- Abreviaturas ---------- */
 .bigword{font-size:clamp(26px,8vw,40px);font-weight:800;text-align:center;padding:22px 8px;line-height:1.15;
   background:var(--panel2);border:1px solid var(--line);border-radius:14px;margin-bottom:14px;word-break:break-word}
 .bigword .sub{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-top:7px}
 .bigabbr{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:clamp(44px,16vw,72px);
   font-weight:800;letter-spacing:2px;text-align:center;padding:20px 6px;color:#fff;
   background:var(--panel2);border:1px solid var(--line);border-radius:14px;margin-bottom:14px}
-.ovenbtns{display:grid;gap:10px;grid-template-columns:1fr 1fr}
-.ovenbtn{min-height:96px;border-radius:16px;border:1.5px solid;font:800 15.5px/1.2 inherit;cursor:pointer;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:10px}
-.ovenbtn .em{font-size:26px}
-.ovenbtn small{font-weight:600;font-size:11.5px;opacity:.85}
-.ovenbtn.fire{background:rgba(255,138,61,.12);border-color:rgba(255,138,61,.5);color:#ffc79a}
-.ovenbtn.fresh{background:rgba(87,224,168,.12);border-color:rgba(87,224,168,.45);color:#a9f2d5}
-.ovenbtn:disabled{opacity:.45}
-
 /* ---------- Comanda (ticket) ---------- */
 .ticket{background:#f7f3e7;color:#15171c;border-radius:6px;padding:16px 16px 18px;max-width:330px;margin:2px auto;
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;box-shadow:0 12px 26px rgba(0,0,0,.4);
   border-top:3px dashed #d8d0bb;border-bottom:3px dashed #d8d0bb}
 .ticket .th{text-align:center;font-weight:700;font-size:12px;letter-spacing:2px;border-bottom:1px solid #c9c1ab;padding-bottom:7px;margin-bottom:10px}
-.ticket .line{font-size:15px;font-weight:700;display:flex;gap:8px;align-items:baseline}
-.ticket .line .q{color:#8a8271}
-.ticket .ing{font-size:17px;font-weight:700;letter-spacing:.5px;margin-top:6px;line-height:1.7}
+.ticket .line{font-size:19px;font-weight:700;display:flex;gap:9px;align-items:baseline;letter-spacing:.5px}
+.ticket .line .q{color:#8a8271;font-size:14px}
+.ticket .ing{font-size:16px;font-weight:700;letter-spacing:.5px;margin-top:7px;line-height:1.8;padding-left:14px;color:#334a2e}
 .ticket .tr{border-top:1px solid #c9c1ab;margin-top:10px;padding-top:7px;font-size:11.5px;color:#7d7566;text-align:center}
 .ticket .sol{color:#14572f;font-weight:700;font-size:13px;margin-top:8px;line-height:1.5}
 
@@ -306,32 +301,32 @@ details.box[open]>summary::before{content:"▾"}
 const ABREV = {
   "pimiento asado":        ["P.A."],
   "berenjenas":            ["B", "BER"],
-  "alcachofas":            ["AL", "ALCH"],
+  "alcachofas":            ["ALCH"],
   "aceitunas negras":      ["A.N.", "ACEIT"],
-  "cebolla":               ["C", "CEB"],
-  "champiñones":           ["CH", "CHAMP"],
-  "brotes de ajo":         ["B.A.", "BR"],
-  "piña":                  ["PI", "PÑ"],
-  "alcaparras":            ["ALC", "CAP"],
+  "cebolla":               ["CEB"],
+  "champiñones":           ["CHAMP"],
+  "brotes de ajo":         ["B.A.", "BROTES"],
+  "piña":                  ["PIÑA"],
+  "alcaparras":            ["ALC"],
   "anchoas":               ["ANCH", "ANC"],
   "atún":                  ["AT"],
   "jamón":                 ["J"],
   "jamón serrano":         ["J.S."],
   "salami":                ["S", "SAL"],
   "sobrasada de Calabria": ["SOB"],
-  "orégano":               ["OR", "ORG"],
+  "orégano":               ["ORE", "ORG"],
   "mozzarella":            ["MOZ"],
   "gouda":                 ["GOU"],
   "manchego":              ["MAN"],
-  "gorgonzola":            ["GORG"],
+  "gorgonzola":            ["Q.A."],
   "almendra":              ["ALM"],
-  "salsa de tomate":       ["S.T."],
+  "salsa de tomate":       ["SALSA"],
   "rúcula":                ["RU", "RUC"],
   "albahaca":              ["ALB"],
   "tomate natural":        ["T.N."],
   "tomate seco":           ["T.S."],
-  "parmesano":             ["PARM", "PM"],
-  "ajo":                   ["AJ"],
+  "parmesano":             ["PARM"],
+  "ajo":                   ["AJO"],
   "aceite de oliva":       ["A.O.", "AOVE"]
 };
 
@@ -412,6 +407,18 @@ const MENU = [
 
 const BASE = ["salsa de tomate","mozzarella"];
 
+/* Pizza base sin nada: es lo que se pide cuando la comanda es a medida
+   ("1x MARGARITA + B + CHAMP"). */
+const MARGARITA = "MARGARITA";
+
+/* ▼ EDITABLE: cómo se canta cada pizza en comanda cuando no se dice el
+   nombre entero de la carta. Añade aquí las vuestras.
+   "Nombre en la carta": "COMO SE PIDE"                                   */
+const MOTE = {
+  "Zan Tropical": "TROPICAL"
+};
+const mote = p => (MOTE[p.name] || p.name).toUpperCase();
+
 /* ══════════════════════════════════════════════════════════════════
    4. Utilidades
    ══════════════════════════════════════════════════════════════════ */
@@ -475,6 +482,8 @@ function load(){
     const raw = JSON.parse(localStorage.getItem(KEY) || 'null');
     if (raw) S = {...S, ...raw, set:{...DEFAULTS, ...(raw.set||{})}};
   }catch(e){ /* almacenamiento no disponible */ }
+  /* por si quedó guardado un modo que ya no existe */
+  if (!MODES.some(m => m.id === S.set.mode)) S.set.mode = DEFAULTS.mode;
 }
 function save(){
   try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
@@ -484,13 +493,16 @@ function dif(){ return DIF[Math.min(4, Math.max(0, S.set.dif-1))]; }
 function statOf(store, key){
   return store[key] || (store[key] = {ok:0, ko:0, seen:0});
 }
+function recordFree(ok){            // marcador global, sin ficha asociada
+  if (ok){ S.hits++; S.streak++; S.best = Math.max(S.best, S.streak); }
+  else   { S.miss++; S.streak = 0; }
+  kpi(); save();
+}
 function record(store, key, ok){
   const st = statOf(store, key);
   st.seen++;
   ok ? st.ok++ : st.ko++;
-  if (ok){ S.hits++; S.streak++; S.best = Math.max(S.best, S.streak); }
-  else   { S.miss++; S.streak = 0; }
-  kpi(); save();
+  recordFree(ok);
 }
 function kpi(){
   $('#kHits').textContent = S.hits;
@@ -620,7 +632,8 @@ function resultPanel(p, extraHtml){
   const sp = el('div'); sp.style.height = '9px'; r.appendChild(sp);
   r.appendChild(recipeEl(p));
   r.appendChild(el('div', 'qsub', 'Comanda: <b style="font-family:ui-monospace,monospace;color:#cfe0ff">' +
-    p.ingredients.map(i => esc(abbrOf(i))).join(' · ') + '</b> — <span class="price">' + fmt(p.price) + ' €</span>'));
+    p.ingredients.map(i => esc(abbrOf(i))).join(' · ') + '</b>' +
+    (p.price != null ? ' — <span class="price">' + fmt(p.price) + ' €</span>' : '')));
   if (extraHtml) r.appendChild(el('div', 'qsub', extraHtml));
   $('#app .card').appendChild(r);
   return r;
@@ -632,22 +645,108 @@ function resultPanel(p, extraHtml){
 const MODES = [
   {id:'monta',   tab:'🍕 Monta la pizza'},
   {id:'nombre',  tab:'❓ ¿Qué pizza es?'},
-  {id:'horno',   tab:'🔥 Horno sí / no'},
-  {id:'abrev',   tab:'🔤 Abreviaturas'},
   {id:'comanda', tab:'🧾 Comanda'},
+  {id:'abrev',   tab:'🔤 Abreviaturas'},
   {id:'flash',   tab:'⚡ Flashcards'},
   {id:'mix',     tab:'🎲 Mezcla'}
 ];
+const RENDER = {
+  monta:   renderMonta,
+  nombre:  renderNombre,
+  comanda: renderComanda,
+  abrev:   renderAbrev,
+  flash:   renderFlash
+};
 let round = null;
 
 function nextRound(){
   fbBox = null;
   let m = S.set.mode;
-  if (m === 'mix') m = pick(['monta','nombre','horno','abrev','comanda']);
+  if (m === 'mix' || !RENDER[m]) m = pick(['monta','nombre','comanda','abrev']);
   round = {mode:m, errors:0, done:false};
-  ({monta:renderMonta, nombre:renderNombre, horno:renderHorno,
-    abrev:renderAbrev, comanda:renderComanda, flash:renderFlash}[m])();
+  RENDER[m]();
   window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ---------- Montaje en dos bloques: cada zona con su propio banco ----------
+   Arriba el bloque del horno (aciertos + opciones que van dentro) y debajo
+   el bloque de fuera (aciertos + opciones que se ponen al salir).          */
+function montaje(card, need, cb){
+  const placed = new Set();
+  const zonas = {}, bancos = {}, bloques = {};
+  const outDist = Math.max(1, Math.round(dif().bank * 0.35));
+  const reparto = {fresh:outDist, fire:Math.max(1, dif().bank - outDist)};
+
+  [{k:'fire',  out:false, tit:'🔥 Dentro del horno', pie:'Se monta antes de hornear'},
+   {k:'fresh', out:true,  tit:'🌿 Se pone al salir',  pie:'Después del horno'}].forEach(g => {
+    const mios = need.filter(n => isOut(n) === g.out);
+
+    const bloque = el('div', 'block ' + g.k);
+    bloque.appendChild(el('div', 'zonehead ' + g.k, g.tit +
+      (S.set.dif < 5    /* en "Bestia" no se dice cuántos van en cada bloque */
+        ? ' <span class="count"><span data-left="' + g.k + '">' + mios.length + '</span> por poner</span>'
+        : '')));
+    zonas[g.k] = el('div', 'zone ' + g.k, '<span class="empty">—</span>');
+    bloque.appendChild(zonas[g.k]);
+
+    const pool = QUIZ_ING.filter(n => isOut(n) === g.out && !need.includes(n) && !BASE.includes(n));
+    const lista = uniq([...mios, ...shuffle(pool).slice(0, reparto[g.k])]).sort(cmp);
+    bancos[g.k] = el('div', 'bank');
+    bancos[g.k].appendChild(el('div', 'hintline', g.pie));
+    const chips = el('div', 'chips');
+    lista.forEach(n => {
+      const c = chip(n, {button:true, hideOven:true});
+      c.onclick = () => intentar(n, c);
+      chips.appendChild(c);
+    });
+    bancos[g.k].appendChild(chips);
+    bloque.appendChild(bancos[g.k]);
+
+    bloques[g.k] = bloque;
+    card.appendChild(bloque);
+  });
+
+  function grupo(n){ return isOut(n) ? 'fresh' : 'fire'; }
+  function redraw(){
+    ['fire','fresh'].forEach(k => {
+      const list = ingSort([...placed].filter(n => grupo(n) === k));
+      zonas[k].innerHTML = list.length ? '' : '<span class="empty">—</span>';
+      list.forEach(n => zonas[k].appendChild(chip(n, {abbr:true, hideOven:true, cls:'done'})));
+      const total = need.filter(n => grupo(n) === k).length;
+      const falta = need.filter(n => grupo(n) === k && !placed.has(n)).length;
+      const cnt = card.querySelector('[data-left="' + k + '"]');
+      if (cnt) cnt.textContent = falta;
+      bloques[k].classList.toggle('done', total > 0 && falta === 0);
+    });
+  }
+  function intentar(n, c){
+    if (round.done || c.disabled) return;
+    c.disabled = true;
+    if (need.includes(n)){
+      placed.add(n);
+      c.classList.add('done');
+      redraw();
+      cb.acierto(n);
+      if (placed.size === need.length) cb.completo();
+    } else {
+      c.classList.add('bad');
+      cb.fallo(n);
+    }
+  }
+
+  redraw();
+  return {
+    placed,
+    quedan: () => need.filter(n => !placed.has(n)),
+    revelar(){
+      need.forEach(n => placed.add(n));
+      redraw();
+      card.querySelectorAll('.bank .chip').forEach(c => {
+        c.disabled = true;
+        if (need.includes(c.dataset.name) && !c.classList.contains('done')) c.classList.add('missed');
+      });
+    }
+  };
 }
 
 /* ---------- Modo 1: monta la pizza ---------- */
@@ -659,56 +758,16 @@ function renderMonta(){
 
   card.appendChild(el('div', 'base', '<span>🍕</span><div>Base ya puesta: <b>salsa de tomate</b> + <b>mozzarella</b></div>'));
 
-  const placed = new Set();
-  const heads = {}, zones = {};
-  ['fire','fresh'].forEach(k => {
-    heads[k] = el('div', 'zonehead ' + k, k === 'fire' ? '🔥 Dentro del horno' : '🌿 Se pone al salir');
-    zones[k] = el('div', 'zone ' + k, '<span class="empty">—</span>');
-    card.appendChild(heads[k]);
-    card.appendChild(zones[k]);
-  });
-
-  function redraw(){
-    ['fire','fresh'].forEach(k => {
-      const list = ingSort([...placed].filter(n => (k === 'fire') !== isOut(n)));
-      zones[k].innerHTML = '';
-      if (!list.length) zones[k].innerHTML = '<span class="empty">—</span>';
-      else list.forEach(n => zones[k].appendChild(chip(n, {abbr:true, hideOven:true, cls:'done'})));
-    });
-  }
-
-  const bankList = (function(){
-    const others = shuffle(PIZZA_ING.filter(i => !need.includes(i))).slice(0, dif().bank);
-    return uniq([...need, ...others]).sort(cmp);
-  })();
-  const label = el('div', 'sectlabel', 'Ingredientes <span class="count"><span id="left">' + need.length + '</span> por colocar</span>');
-  card.appendChild(label);
-  const bank = el('div', 'chips');
-  bankList.forEach(n => {
-    const c = chip(n, {button:true, hideOven:!S.set.oven});
-    c.onclick = () => attempt(n, c);
-    bank.appendChild(c);
-  });
-  card.appendChild(bank);
-
-  function attempt(n, c){
-    if (round.done || c.disabled) return;
-    c.disabled = true;
-    if (need.includes(n)){
-      placed.add(n);
-      c.classList.add('done');
-      redraw();
-      $('#left').textContent = need.length - placed.size;
-      fb('ok', '<b>' + esc(n) + '</b> ✔ — va ' + ovenWord(n) + '.');
-      if (placed.size === need.length) finish();
-    } else {
+  const m = montaje(card, need, {
+    acierto: n => fb('ok', '<b>' + esc(n) + '</b> ✔ — va ' + ovenWord(n) + '.'),
+    fallo: n => {
       round.errors++;
-      c.classList.add('bad');
       const dónde = MENU.filter(x => x.ingredients.includes(n)).map(x => x.name);
       fb('bad', 'La <b>' + esc(p.name) + '</b> no lleva <b>' + esc(n) + '</b>.' +
         (dónde.length ? ' Eso sí va en: ' + esc(dónde.slice(0,3).join(', ')) + (dónde.length > 3 ? '…' : '') + '.' : ''));
-    }
-  }
+    },
+    completo: () => finish(false)
+  });
 
   function finish(revelada){
     round.done = true;
@@ -723,26 +782,21 @@ function renderMonta(){
   setActions([
     {label:'Pista', cls:'ghost narrow', on:() => {
       if (round.done) return;
-      const falta = need.filter(n => !placed.has(n));
+      const falta = m.quedan();
       if (!falta.length) return;
       const n = pick(falta);
       round.errors++;
-      fb('info', 'Falta alguno que empieza por <b>' + esc(n[0].toUpperCase()) + '</b>… (' + falta.length + ' por colocar)');
+      fb('info', 'Falta alguno que empieza por <b>' + esc(n[0].toUpperCase()) + '</b>, ' +
+        (isOut(n) ? 'de los de <b>fuera</b> del horno' : 'de los de <b>dentro</b> del horno') +
+        '… (' + falta.length + ' por colocar)');
     }},
     {label:'Ver receta', cls:'ghost', id:'revealBtn', on:() => {
       if (round.done) return;
-      need.forEach(n => placed.add(n));
-      redraw();
-      $('#left').textContent = 0;
-      bank.querySelectorAll('.chip').forEach(c => {
-        c.disabled = true;
-        if (need.includes(c.dataset.name) && !c.classList.contains('done')) c.classList.add('missed');
-      });
+      m.revelar();
       finish(true);
     }},
     {label:'Saltar ▸', cls:'primary narrow', id:'nextBtn', on:nextRound}
   ]);
-  redraw();
 }
 
 /* ---------- Modo 2: ¿qué pizza es? ---------- */
@@ -812,76 +866,6 @@ function renderNombre(){
   ]);
 }
 
-/* ---------- Modo 3: dentro o fuera del horno ---------- */
-function renderHorno(){
-  const p = round.pizza = pickPizza();
-  const seq = shuffle(p.ingredients.slice());
-  let i = 0;
-  const marks = [];
-
-  const card = newCard('¿Dentro o fuera del horno?', esc(p.name), 'Ve montándola ingrediente a ingrediente.');
-  const dots = el('div', 'progdots');
-  card.appendChild(dots);
-  const word = el('div', 'bigword');
-  card.appendChild(word);
-  const btns = el('div', 'ovenbtns');
-  const bIn  = el('button', 'ovenbtn fire',  '<span class="em">🔥</span>Dentro<small>antes de hornear</small>');
-  const bOut = el('button', 'ovenbtn fresh', '<span class="em">🌿</span>Fuera<small>al salir del horno</small>');
-  btns.appendChild(bIn); btns.appendChild(bOut);
-  card.appendChild(btns);
-
-  function drawDots(){
-    dots.innerHTML = '';
-    seq.forEach((_, k) => dots.appendChild(el('div', 'pdot ' + (marks[k] === true ? 'ok' : marks[k] === false ? 'ko' : (k === i ? 'now' : '')))));
-  }
-  function show(){
-    drawDots();
-    const n = seq[i];
-    word.innerHTML = esc(n) + '<span class="sub">' + (i+1) + ' de ' + seq.length +
-      ' · comanda: ' + esc(abbrOf(n)) + '</span>';
-    bIn.disabled = bOut.disabled = false;
-  }
-  function answer(said){
-    if (round.done || bIn.disabled) return;
-    const n = seq[i];
-    const good = (said === 'out') === isOut(n);
-    marks[i] = good;
-    record(S.ig, n, good);
-    if (!good) round.errors++;
-    bIn.disabled = bOut.disabled = true;
-    const nota = (ING[n] && ING[n].nota) ? ' (' + esc(ING[n].nota) + ')' : '';
-    fb(good ? 'ok' : 'bad', '<b>' + esc(n) + '</b>' + nota + ' va ' + ovenWord(n) + '.');
-    drawDots();
-    if (good){
-      setTimeout(() => { if (!round.done){ i++; i < seq.length ? show() : finish(); } }, 620);
-    } else {
-      setActions([{label:'Seguir ▸', cls:'primary', id:'nextBtn', on:() => { i++; i < seq.length ? (fbBox.remove(), fbBox = null, show(), baseActions()) : finish(); }}]);
-    }
-  }
-  bIn.onclick  = () => answer('in');
-  bOut.onclick = () => answer('out');
-
-  function finish(){
-    round.done = true;
-    const ok = round.errors === 0;
-    record(S.pz, p.id, ok);
-    word.classList.add('hide'); btns.classList.add('hide'); dots.classList.add('hide');
-    fb(ok ? 'ok' : 'bad', ok
-      ? '¡Montaje perfecto de la <b>' + esc(p.name) + '</b>! 🔥 Racha: ' + S.streak
-      : '<b>' + round.errors + '</b> fallo(s) en la <b>' + esc(p.name) + '</b>. Repásala abajo.');
-    resultPanel(p);
-    setActions([{label:'Siguiente ▸', cls:'primary', id:'nextBtn', on:nextRound}]);
-  }
-  function baseActions(){
-    setActions([
-      {label:'No lo sé', cls:'ghost', id:'revealBtn', on:() => answer(isOut(seq[i]) ? 'in' : 'out')},
-      {label:'Saltar ▸', cls:'primary narrow', id:'nextBtn', on:nextRound}
-    ]);
-  }
-  show();
-  baseActions();
-}
-
 /* ---------- Modo 4: abreviaturas ---------- */
 function renderAbrev(){
   const n = round.ing = pickIng();
@@ -947,54 +931,92 @@ function renderAbrev(){
   ]);
 }
 
-/* ---------- Modo 5: comanda completa ---------- */
+/* ---------- Modo 3: comanda ----------
+   Así entran los pedidos de verdad: o una pizza de la carta con sus extras
+   ("1x TROPICAL + P.A.") o una margarita a medida ("1x MARGARITA + B + CEB").
+   El ejercicio es montarla: leer las abreviaturas y colocar cada cosa en su
+   bloque de horno.                                                          */
+function nuevaComanda(){
+  const libre = PIZZA_ING.filter(n => !BASE.includes(n));
+  const mesa = 2 + Math.floor(Math.random()*14);
+  const llevar = Math.random() < 0.3;
+
+  if (Math.random() < 0.4){                                   // a medida
+    const cuantos = 2 + Math.floor(Math.random()*4);          // 2 a 5 ingredientes
+    const ing = shuffle(libre).slice(0, cuantos);
+    return {medida:true, pizza:null, titulo:MARGARITA, extras:ing, need:ing, mesa, llevar};
+  }
+  const p = pickPizza();                                      // de carta
+  const cuantos = Math.random() < 0.45 ? (Math.random() < 0.25 ? 2 : 1) : 0;
+  const extras = shuffle(libre.filter(n => !p.ingredients.includes(n))).slice(0, cuantos);
+  return {medida:false, pizza:p, titulo:mote(p), extras,
+          need:[...p.ingredients, ...extras], mesa, llevar};
+}
+
 function renderComanda(){
-  const p = round.pizza = pickPizza();
-  const card = newCard('Comanda', '¿Qué pizza piden?', 'Tal y como llega escrita.');
+  const c = round.comanda = nuevaComanda();
+  const card = newCard('Comanda', 'Monta lo que piden',
+    c.medida ? 'Pedido a medida: solo lleva lo que pone.'
+             : 'Pizza de la carta. Los extras vienen con <b>+</b>.');
 
   const t = el('div', 'ticket');
   t.innerHTML = '<div class="th">RUGANTINO</div>' +
-    '<div class="line"><span class="q">1x</span><span>PIZZA</span></div>' +
-    '<div class="ing">' + p.ingredients.map(i => esc(abbrOf(i))).join(' · ') + '</div>' +
-    '<div class="tr">mesa ' + (2 + Math.floor(Math.random()*12)) + ' · para llevar? no</div>';
+    '<div class="line"><span class="q">1x</span><span>' + esc(c.titulo) + '</span></div>' +
+    (c.extras.length ? '<div class="ing">' + c.extras.map(i => '+ ' + esc(abbrOf(i))).join('<br>') + '</div>' : '') +
+    '<div class="tr">mesa ' + c.mesa + (c.llevar ? ' · PARA LLEVAR' : '') + '</div>';
   card.appendChild(t);
 
-  card.appendChild(el('div', 'sectlabel', 'Elige el nombre'));
-  const box = el('div', 'opts');
-  pizzaOptions(p, dif().opts, dif().bias).forEach((o, i) => {
-    const b = el('button', 'opt', '<span class="k">' + (i+1) + '</span><span>' + esc(o.name) + '</span>');
-    b.dataset.pid = o.id;
-    b.onclick = () => answer(o, b);
-    box.appendChild(b);
-  });
-  card.appendChild(box);
-
-  function answer(o, b){
-    if (round.done || b.disabled) return;
-    if (o.id === p.id){ b.classList.add('ok'); finish(false); }
-    else {
+  const m = montaje(card, c.need, {
+    acierto: n => {
+      const extra = c.extras.includes(n);
+      fb('ok', '<b>' + esc(abbrOf(n)) + '</b> = <b>' + esc(n) + '</b> ✔' +
+        (extra ? ' <span class="muted">(el extra del ticket)</span>' : '') +
+        ' — va ' + ovenWord(n) + '.');
+    },
+    fallo: n => {
       round.errors++;
-      b.classList.add('bad'); b.disabled = true;
-      fb('bad', 'La <b>' + esc(o.name) + '</b> se pediría <b style="font-family:ui-monospace,monospace">' +
-        esc(o.ingredients.map(x => abbrOf(x)).join(' · ')) + '</b>.');
-    }
-  }
+      if (c.medida){
+        fb('bad', 'En esta comanda no piden <b>' + esc(n) + '</b>. Solo lo que pone el ticket: <b>' +
+          esc(c.need.map(x => abbrOf(x)).join(' · ')) + '</b>.');
+      } else {
+        fb('bad', 'La <b>' + esc(c.titulo) + '</b> no lleva <b>' + esc(n) + '</b>' +
+          (c.extras.length ? ', y tampoco lo piden de extra' : '') + '.');
+      }
+    },
+    completo: () => finish(false)
+  });
+
   function finish(revelada){
     round.done = true;
-    record(S.pz, p.id, round.errors === 0 && !revelada);
-    box.querySelectorAll('.opt').forEach(b => {
-      b.disabled = true;
-      if (+b.dataset.pid === p.id) b.classList.add('ok');
-    });
-    t.querySelector('.ing').insertAdjacentHTML('afterend',
-      '<div class="sol">' + p.ingredients.map(i => esc(abbrOf(i)) + ' = ' + esc(i)).join('<br>') + '</div>');
+    if (c.pizza) record(S.pz, c.pizza.id, round.errors === 0 && !revelada);
+    else recordFree(round.errors === 0 && !revelada);
+
+    if (c.extras.length){
+      t.insertAdjacentHTML('beforeend',
+        '<div class="sol">' + c.extras.map(i => esc(abbrOf(i)) + ' = ' + esc(i)).join('<br>') + '</div>');
+    }
     fb(revelada ? 'warn' : (round.errors ? 'bad' : 'ok'),
-      'Es la <b>' + esc(p.name) + '</b> — <span class="price">' + fmt(p.price) + ' €</span>');
-    resultPanel(p);
+      revelada ? 'Repásala y seguimos.'
+      : round.errors ? 'Montada con <b>' + round.errors + '</b> fallo(s).'
+      : '¡Comanda lista! 🔥 Racha: ' + S.streak);
+
+    resultPanel(
+      c.pizza ? {...c.pizza, ingredients:c.need}
+              : {name:'A medida', ingredients:c.need, price:null},
+      c.medida
+        ? 'Pedido a medida sobre margarita: <b>' + esc(c.extras.join(', ')) + '</b>'
+        : c.extras.length
+          ? 'Extra' + (c.extras.length > 1 ? 's' : '') + ' del ticket: <b>' + esc(c.extras.join(', ')) + '</b>'
+          : 'Sin extras: la ' + esc(c.titulo) + ' tal cual.'
+    );
     setActions([{label:'Siguiente ▸', cls:'primary', id:'nextBtn', on:nextRound}]);
   }
   setActions([
-    {label:'Ver respuesta', cls:'ghost', id:'revealBtn', on:() => { if (!round.done) finish(true); }},
+    {label:'Ver respuesta', cls:'ghost', id:'revealBtn', on:() => {
+      if (round.done) return;
+      m.revelar();
+      finish(true);
+    }},
     {label:'Saltar ▸', cls:'primary narrow', id:'nextBtn', on:nextRound}
   ]);
 }
